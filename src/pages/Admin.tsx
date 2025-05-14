@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Save, Plus, Trash2, LogOut } from 'lucide-react';
+import { Plus, Trash2, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
@@ -18,6 +18,7 @@ interface Project {
 const Admin = () => {
   const navigate = useNavigate();
   const { isAdmin, logout } = useAuth();
+  const { login } = useAuth(); // Call useAuth at the top level
   const [projects, setProjects] = useState(() => {
     const savedProjects = localStorage.getItem('portfolio_projects');
     return savedProjects ? JSON.parse(savedProjects) : [];
@@ -54,7 +55,6 @@ const Admin = () => {
             className="w-full px-4 py-2 border rounded-lg mb-4"
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                const { login } = useAuth();
                 if (login(e.currentTarget.value)) {
                   window.location.reload();
                 } else {
@@ -87,13 +87,13 @@ const Admin = () => {
   };
 
   const handleDelete = (id: number) => {
-    const updatedProjects = projects.filter(project => project.id !== id);
+    const updatedProjects = projects.filter((project: { id: number; }) => project.id !== id);
     setProjects(updatedProjects);
     localStorage.setItem('portfolio_projects', JSON.stringify(updatedProjects));
   };
 
   const handleUpdate = (id: number, field: keyof Project, value: any) => {
-    const updatedProjects = projects.map(project => 
+    const updatedProjects = projects.map((project: { id: number; }) => 
       project.id === id ? { ...project, [field]: value } : project
     );
     setProjects(updatedProjects);
@@ -242,7 +242,7 @@ const Admin = () => {
         <div className="space-y-4">
           <h2 className="text-xl font-semibold mb-4">Your Projects</h2>
           
-          {projects.map((project) => (
+          {projects.map((project = projects) => (
             <motion.div
               key={project.id}
               initial={{ opacity: 0, y: 20 }}

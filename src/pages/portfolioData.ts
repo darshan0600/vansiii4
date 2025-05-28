@@ -232,4 +232,8 @@ export const projects = [
       "https://images.unsplash.com/photo-1555215695-3004980ad54e"
     ]
   }
-]
+];
+
+if (!localStorage.getItem('portfolio_projects')) {
+  localStorage.setItem('portfolio_projects', JSON.stringify(projects));
+}

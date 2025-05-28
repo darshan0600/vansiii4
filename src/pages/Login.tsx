@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,17 +14,22 @@ const Login = () => {
     name: '',
     confirmPassword: ''
   });
+  const [error, setError] = useState<string | null>(null);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: formData.email,
-          password: formData.password,
-        });
-        if (error) throw error;
+        await login(formData.email, formData.password);
+        navigate('/art-gallery'); // Redirect to art gallery after login
       } else {
+        if (formData.password !== formData.confirmPassword) {
+          throw new Error('Passwords do not match');
+        }
         const { error } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
@@ -33,26 +40,12 @@ const Login = () => {
           },
         });
         if (error) throw error;
+        setIsLogin(true); // Switch to login after signup
+        setError('Signup successful! Please log in.');
       }
     } catch (error) {
       console.error('Authentication error:', error);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`
-        }
-      });
-      
-      if (error) {
-        throw error;
-      }
-    } catch (error) {
-      console.error('Google sign-in error:', error);
+      setError(error instanceof Error ? error.message : 'An error occurred');
     }
   };
 
@@ -73,7 +66,7 @@ const Login = () => {
           className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100"
         >
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-vansiii-accent to-pink-600 bg-clip-text text-transparent">
               {isLogin ? 'Welcome Back' : 'Join Us'}
             </h2>
             <p className="text-gray-600 mt-2">
@@ -84,7 +77,7 @@ const Login = () => {
           </div>
 
           <button
-            onClick={handleGoogleSignIn}
+            /*onClick={handleGoogleSignIn}*/
             className="w-full mb-6 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-3 group"
           >
             <img 
@@ -121,7 +114,7 @@ const Login = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                      className="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-vansiii-accent focus:ring-1 focus:ring-vansiii-accent transition-colors"
                       placeholder="Enter your name"
                       required
                     />
@@ -139,7 +132,7 @@ const Login = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                  className="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-vansiii-accent focus:ring-1 focus:ring-vansiii-accent transition-colors"
                   placeholder="Enter your email"
                   required
                 />
@@ -155,7 +148,7 @@ const Login = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                  className="w-full pl-10 pr-12 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-vansiii-accent focus:ring-1 focus:ring-vansiii-accent transition-colors"
                   placeholder="Enter your password"
                   required
                 />
@@ -185,7 +178,7 @@ const Login = () => {
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                      className="w-full pl-10 pr-4 py-2 rounded-xl bg-gray-50 border border-gray-200 focus:border-vansiii-accent focus:ring-1 focus:ring-vansiii-accent transition-colors"
                       placeholder="Confirm your password"
                       required
                     />
@@ -196,15 +189,19 @@ const Login = () => {
 
             {isLogin && (
               <div className="flex justify-end">
-                <button type="button" className="text-sm text-purple-600 hover:text-purple-700">
+                <button type="button" className="text-sm text-vansiii-accent hover:text-vansiii-accent">
                   Forgot password?
                 </button>
               </div>
             )}
 
+            {error && (
+              <p className="text-red-600 text-sm text-center">{error}</p>
+            )}
+
             <motion.button
               type="submit"
-              className="w-full bg-purple-600 text-white py-2 px-4 rounded-xl hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 group"
+              className="w-full bg-vansiii-accent text-white py-2 px-4 rounded-xl hover:bg-vansiii-accent transition-colors flex items-center justify-center gap-2 group"
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
             >
@@ -216,7 +213,7 @@ const Login = () => {
           <div className="mt-6 text-center">
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-gray-600 hover:text-purple-600 transition-colors"
+              className="text-sm text-gray-600 hover:text-vansiii-accent transition-colors"
             >
               {isLogin 
                 ? "Don't have an account? Sign up" 

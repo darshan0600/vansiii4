@@ -21,9 +21,9 @@ const Navbar = ({ onCategoryChange, selectedCategory }: NavbarProps) => {
     { title: 'Blogs', path: '/blog' },
     { title: 'Contact', path: '/contact' },
     { title: 'Meet the Team', path: '/team' },
-    ...(isAdmin ? [{ title: 'Admin', path: '/admin' }] : [])
+    ...(location.pathname === '/admin' ? [{ title: 'Admin', path: '/admin' }] : [])
   ];
-
+ 
   const categories = [
     "All",
     "Marketing",
@@ -36,7 +36,7 @@ const Navbar = ({ onCategoryChange, selectedCategory }: NavbarProps) => {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 h-20 bg-[#F8F5F1]" style={{ zIndex: 9999 }}>
+      <nav className="fixed top-0 left-0 right-0 h-20 bg-vansiii" style={{ zIndex: 9999 }}>
         <div className="h-full px-6 flex items-center gap-8">
           <button
             onClick={() => setIsMenuOpen(true)}
@@ -104,9 +104,9 @@ const Navbar = ({ onCategoryChange, selectedCategory }: NavbarProps) => {
                   >
                     <Link
                       to={item.path}
-                      className={`text-3xl tracking-wide hover:text-purple-600 transition-colors block ${
+                      className={`text-3xl tracking-wide hover:text-vansiii-accent transition-colors block ${
                         location.pathname === item.path 
-                          ? 'font-bold text-purple-600' 
+                          ? 'font-bold text-vansiii-accent' 
                           : 'font-light'
                       }`}
                       onClick={() => setIsMenuOpen(false)}

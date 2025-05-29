@@ -3,11 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, Check, X, Plus } from 'lucide-react';
+import { categories, Category } from './portfolioData';
 
 interface Project {
   id: number;
   title: string;
-  category: string;
+  category: Category;
   images: string[];
   description: string;
   client?: string;
@@ -62,7 +63,7 @@ const AdminDashboard = () => {
   const [newProject, setNewProject] = useState<Project>({
     id: Date.now(),
     title: '',
-    category: '',
+    category: 'Marketing',
     images: [],
     description: '',
     client: '',
@@ -98,18 +99,15 @@ const AdminDashboard = () => {
     }
   }, [isAdmin, isLoading, navigate]);
 
-  // Save projects to localStorage
   useEffect(() => {
     localStorage.setItem('portfolio_projects', JSON.stringify(projects));
   }, [projects]);
 
-  // Save artworks to localStorage
   useEffect(() => {
     localStorage.setItem('art_gallery', JSON.stringify(artworks));
     localStorage.setItem('pending_artworks', JSON.stringify(pendingArtworks));
   }, [artworks, pendingArtworks]);
 
-  // Save blog posts to localStorage
   useEffect(() => {
     localStorage.setItem('blog_posts', JSON.stringify(blogPosts));
   }, [blogPosts]);
@@ -186,7 +184,7 @@ const AdminDashboard = () => {
     setNewProject({
       id: Date.now(),
       title: '',
-      category: '',
+      category: 'Marketing',
       images: [],
       description: '',
       client: '',
@@ -283,7 +281,6 @@ const AdminDashboard = () => {
           </button>
         </div>
 
-        {/* Tabs */}
         <div className="mb-8">
           <div className="flex border-b border-gray-200">
             {['Portfolio', 'Artwork', 'Blog'].map((tab) => (
@@ -310,7 +307,6 @@ const AdminDashboard = () => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            {/* Portfolio Tab */}
             {activeTab === 'Portfolio' && (
               <div>
                 <h2 className="text-2xl font-semibold mb-6">Manage Portfolio Projects</h2>
@@ -327,13 +323,17 @@ const AdminDashboard = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                    <input
-                      type="text"
+                    <select
                       value={newProject.category}
-                      onChange={(e) => setNewProject({ ...newProject, category: e.target.value })}
+                      onChange={(e) => setNewProject({ ...newProject, category: e.target.value as Category })}
                       className="w-full px-3 py-2 border rounded-lg"
-                      placeholder="e.g., UI/UX, Marketing"
-                    />
+                    >
+                      {categories.map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Images</label>
@@ -415,29 +415,28 @@ const AdminDashboard = () => {
                   <p className="text-gray-600">No projects available.</p>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {projects.map((project) => (
-                    <div key={project.id} className="bg-vansiii-white p-4 rounded-lg shadow">
-                      <img
-                        src={project.images[0] || 'https://via.placeholder.com/150'}
-                        alt={project.title}
-                        className="w-full h-40 object-cover rounded mb-4"
-                      />
-                      <h3 className="text-lg font-medium text-vansiii-black">{project.title}</h3>
-                      <p className="text-sm text-gray-600">{project.category}</p>
-                      <button
-                        onClick={() => handleDeleteProject(project.id)}
-                        className="flex items-center gap-2 bg-vansiii-accent text-vansiii-white px-4 py-2 rounded-lg mt-4"
-                      >
-                        <Trash2 className="w-4 h-4" /> Delete
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                    {projects.map((project) => (
+                      <div key={project.id} className="bg-vansiii-white p-4 rounded-lg shadow">
+                        <img
+                          src={project.images[0] || 'https://via.placeholder.com/150'}
+                          alt={project.title}
+                          className="w-full h-40 object-cover rounded mb-4"
+                        />
+                        <h3 className="text-lg font-medium text-vansiii-black">{project.title}</h3>
+                        <p className="text-sm text-gray-600">{project.category}</p>
+                        <button
+                          onClick={() => handleDeleteProject(project.id)}
+                          className="flex items-center gap-2 bg-vansiii-error text-vansiii-white px-4 py-2 rounded-lg mt-4"
+                        >
+                          <Trash2 className="w-4 h-4" /> Delete
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
 
-            {/* Artwork Tab */}
             {activeTab === 'Artwork' && (
               <div>
                 <h2 className="text-2xl font-semibold mb-6">Manage Artwork Submissions</h2>
@@ -515,11 +514,11 @@ const AdminDashboard = () => {
                     />
                   </div>
                   <button
-                  type="submit"
-                  className="flex items-center gap-2 bg-vansiii-accent text-vansiii-white px-6 py-3 rounded-lg hover:accent-bg transition-colors"
-                >
-                  <Plus className="w-5 h-5" /> Add Artwork
-                </button>
+                    type="submit"
+                    className="flex items-center gap-2 bg-vansiii-accent text-vansiii-white px-6 py-3 rounded-lg hover:accent-bg transition-colors"
+                  >
+                    <Plus className="w-5 h-5" /> Add Artwork
+                  </button>
                 </form>
 
                 <h3 className="text-xl font-semibold mb-4">Pending Submissions</h3>
@@ -527,28 +526,28 @@ const AdminDashboard = () => {
                   <p className="text-gray-600">No pending artworks.</p>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {pendingArtworks.map((artwork) => (
-                    <div key={artwork.id} className="bg-vansiii-white p-4 rounded-lg shadow">
-                      <img src={artwork.image} alt={artwork.title} className="w-full h-40 object-cover rounded mb-4" />
-                      <h3 className="text-lg font-medium text-vansiii-black">{artwork.title}</h3>
-                      <p className="text-sm text-gray-600">{artwork.artist}</p>
-                      <div className="flex gap-4 mt-4">
-                        <button
-                          onClick={() => handleApproveArtwork(artwork)}
-                          className="flex items-center gap-2 bg-vansiii-success text-vansiii-white px-4 py-2 rounded-lg"
-                        >
-                          <Check className="w-4 h-4" /> Approve
-                        </button>
-                        <button
-                          onClick={() => handleRejectArtwork(artwork.id)}
-                          className="flex items-center gap-2 bg-vansiii-accent text-vansiii-white px-4 py-2 rounded-lg"
-                        >
-                          <X className="w-4 h-4" /> Reject
-                        </button>
+                    {pendingArtworks.map((artwork) => (
+                      <div key={artwork.id} className="bg-vansiii-white p-4 rounded-lg shadow">
+                        <img src={artwork.image} alt={artwork.title} className="w-full h-40 object-cover rounded mb-4" />
+                        <h3 className="text-lg font-medium text-vansiii-black">{artwork.title}</h3>
+                        <p className="text-sm text-gray-600">{artwork.artist}</p>
+                        <div className="flex gap-4 mt-4">
+                          <button
+                            onClick={() => handleApproveArtwork(artwork)}
+                            className="flex items-center gap-2 bg-vansiii-success text-vansiii-white px-4 py-2 rounded-lg"
+                          >
+                            <Check className="w-4 h-4" /> Approve
+                          </button>
+                          <button
+                            onClick={() => handleRejectArtwork(artwork.id)}
+                            className="flex items-center gap-2 bg-vansiii-error text-vansiii-white px-4 py-2 rounded-lg"
+                          >
+                            <X className="w-4 h-4" /> Reject
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
                 )}
 
                 <h3 className="text-xl font-semibold mb-4 mt-8">Approved Artworks</h3>
@@ -556,25 +555,24 @@ const AdminDashboard = () => {
                   <p className="text-gray-600">No approved artworks.</p>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {artworks.map((artwork) => (
-                    <div key={artwork.id} className="bg-vansiii-white p-4 rounded-lg shadow">
-                      <img src={artwork.image} alt={artwork.title} className="w-full h-40 object-cover rounded mb-4" />
-                      <h3 className="text-lg font-medium text-vansiii-black">{artwork.title}</h3>
-                      <p className="text-sm text-gray-600">{artwork.artist}</p>
-                      <button
-                        onClick={() => setArtworks(artworks.filter((a) => a.id !== artwork.id))}
-                        className="flex items-center gap-2 bg-vansiii-accent text-vansiii-white px-4 py-2 rounded-lg mt-4"
-                      >
-                        <Trash2 className="w-4 h-4" /> Delete
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                    {artworks.map((artwork) => (
+                      <div key={artwork.id} className="bg-vansiii-white p-4 rounded-lg shadow">
+                        <img src={artwork.image} alt={artwork.title} className="w-full h-40 object-cover rounded mb-4" />
+                        <h3 className="text-lg font-medium text-vansiii-black">{artwork.title}</h3>
+                        <p className="text-sm text-gray-600">{artwork.artist}</p>
+                        <button
+                          onClick={() => setArtworks(artworks.filter((a) => a.id !== artwork.id))}
+                          className="flex items-center gap-2 bg-vansiii-error text-vansiii-white px-4 py-2 rounded-lg mt-4"
+                        >
+                          <Trash2 className="w-4 h-4" /> Delete
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
 
-            {/* Blog Tab */}
             {activeTab === 'Blog' && (
               <div>
                 <h2 className="text-2xl font-semibold mb-6">Manage Blog Posts</h2>
@@ -644,11 +642,11 @@ const AdminDashboard = () => {
                     />
                   </div>
                   <button
-                  type="submit"
-                  className="flex items-center gap-2 bg-vansiii-accent text-vansiii-white px-6 py-3 rounded-lg hover:accent-bg transition-colors"
-                >
-                  <Plus className="w-5 h-5" /> Add Blog Post
-                </button>
+                    type="submit"
+                    className="flex items-center gap-2 bg-vansiii-accent text-vansiii-white px-6 py-3 rounded-lg hover:accent-bg transition-colors"
+                  >
+                    <Plus className="w-5 h-5" /> Add Blog Post
+                  </button>
                 </form>
 
                 <h3 className="text-xl font-semibold mb-4">Existing Blog Posts</h3>
@@ -656,20 +654,20 @@ const AdminDashboard = () => {
                   <p className="text-gray-600">No blog posts available.</p>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {blogPosts.map((post) => (
-                    <div key={post.id} className="bg-vansiii-white p-4 rounded-lg shadow">
-                      <img src={post.image} alt={post.title} className="w-full h-40 object-cover rounded mb-4" />
-                      <h3 className="text-lg font-medium text-vansiii-black">{post.title}</h3>
-                      <p className="text-sm text-gray-600">{post.date}</p>
-                      <button
-                        onClick={() => handleDeleteBlogPost(post.id)}
-                        className="flex items-center gap-2 bg-vansiii-accent text-vansiii-white px-4 py-2 rounded-lg mt-4"
-                      >
-                        <Trash2 className="w-4 h-4" /> Delete
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                    {blogPosts.map((post) => (
+                      <div key={post.id} className="bg-vansiii-white p-4 rounded-lg shadow">
+                        <img src={post.image} alt={post.title} className="w-full h-40 object-cover rounded mb-4" />
+                        <h3 className="text-lg font-medium text-vansiii-black">{post.title}</h3>
+                        <p className="text-sm text-gray-600">{post.date}</p>
+                        <button
+                          onClick={() => handleDeleteBlogPost(post.id)}
+                          className="flex items-center gap-2 bg-vansiii-error text-vansiii-white px-4 py-2 rounded-lg mt-4"
+                        >
+                          <Trash2 className="w-4 h-4" /> Delete
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             )}

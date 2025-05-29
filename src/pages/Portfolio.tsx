@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Masonry from 'react-masonry-css';
 import { Eye, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { projects, categories, Category } from './portfolioData';
 
 interface Project {
   id: number;
   title: string;
-  category: string;
-  images: string[]; // Array of Cloudinary image URLs
+  category: Category;
+  images: string[];
   description: string;
   client?: string;
   year?: string;
@@ -16,7 +17,7 @@ interface Project {
 }
 
 interface PortfolioProps {
-  selectedCategory?: string; // Made optional
+  selectedCategory?: string;
 }
 
 const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => void }) => {
@@ -68,7 +69,7 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                src={`${images[currentImageIndex]}?f_auto,q_auto`}
+                src={`${images[currentImageIndex]}`}
                 alt={`${project.title} ${currentImageIndex + 1}`}
                 className="max-h-full max-w-full object-contain rounded-xl"
                 onError={(e) => {
@@ -142,43 +143,41 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
 const Portfolio = ({ selectedCategory = 'All' }: PortfolioProps) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string>(selectedCategory);
 
   useEffect(() => {
     const savedProjects = localStorage.getItem('portfolio_projects');
-    console.log('Raw localStorage data:', savedProjects);
-    if (savedProjects) {
-      try {
-        const parsedProjects = JSON.parse(savedProjects);
-        const migratedProjects = parsedProjects.map((project: any) => {
-          const images = project.image
-            ? [project.image]
-            : Array.isArray(project.images)
-            ? project.images
-            : [];
-          console.log(`Project ${project.id || 'unknown'} images:`, images);
-          return {
-            ...project,
-            images,
-            image: undefined,
-          };
-        });
-        setProjects(migratedProjects);
-        localStorage.setItem('portfolio_projects', JSON.stringify(migratedProjects));
-        console.log('Migrated projects:', migratedProjects);
-      } catch (error) {
-        console.error('Error parsing localStorage:', error);
-        setProjects([]);
-        localStorage.removeItem('portfolio_projects');
-      }
+    if (!savedProjects) {
+      localStorage.setItem('portfolio_projects', JSON.stringify(projects));
+    }
+    try {
+      const parsedProjects = savedProjects ? JSON.parse(savedProjects) : projects;
+      const migratedProjects = parsedProjects.map((project: any) => {
+        const images = project.image
+          ? [project.image]
+          : Array.isArray(project.images)
+          ? project.images
+          : [];
+        const category = categories.includes(project.category) ? project.category : 'Technology';
+        return {
+          ...project,
+          images,
+          category,
+          image: undefined,
+        };
+      });
+      setProjects(migratedProjects);
+      localStorage.setItem('portfolio_projects', JSON.stringify(migratedProjects));
+    } catch (error) {
+      console.error('Error parsing localStorage:', error);
+      setProjects(projects);
+      localStorage.setItem('portfolio_projects', JSON.stringify(projects));
     }
   }, []);
 
-  const filteredProjects = selectedCategory === 'All'
+  const filteredProjects = activeCategory === 'All'
     ? projects
-    : projects.filter((project) => project.category === selectedCategory);
-
-  console.log('Selected category:', selectedCategory);
-  console.log('Filtered projects:', filteredProjects);
+    : projects.filter((project) => project.category === activeCategory);
 
   const breakpointColumns = {
     default: 4,
@@ -192,9 +191,35 @@ const Portfolio = ({ selectedCategory = 'All' }: PortfolioProps) => {
   return (
     <div className="min-h-screen bg-[#F8F5F1] pt-20">
       <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="mb-8 flex flex-wrap gap-4">
+          <button
+            onClick={() => setActiveCategory('All')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeCategory === 'All'
+                ? 'bg-vansiii-accent text-vansiii-white'
+                : 'bg-vansiii-white text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            All
+          </button>
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeCategory === category
+                  ? 'bg-vansiii-accent text-vansiii-white'
+                  : 'bg-vansiii-white text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
         <AnimatePresence mode="wait">
           <motion.div
-            key={selectedCategory}
+            key={activeCategory}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -203,7 +228,7 @@ const Portfolio = ({ selectedCategory = 'All' }: PortfolioProps) => {
             {filteredProjects.length === 0 ? (
               <div className="text-center py-16">
                 <p className="text-xl text-gray-600">
-                  No projects found for category "{selectedCategory}". Add some in the Admin panel!
+                  No projects found for category "{activeCategory}".
                 </p>
               </div>
             ) : (
@@ -227,7 +252,7 @@ const Portfolio = ({ selectedCategory = 'All' }: PortfolioProps) => {
                     >
                       {project.images.length > 0 && project.images[0] ? (
                         <img
-                          src={`${project.images[0]}?f_auto,q_auto`}
+                          src={`${project.images[0]}`}
                           alt={project.title}
                           loading="lazy"
                           className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
@@ -261,13 +286,13 @@ const Portfolio = ({ selectedCategory = 'All' }: PortfolioProps) => {
             )}
           </motion.div>
         </AnimatePresence>
-      </div>
 
-      <AnimatePresence>
-        {selectedProject && (
-          <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
-        )}
-      </AnimatePresence>
+        <AnimatePresence>
+          {selectedProject && (
+            <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 };

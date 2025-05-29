@@ -38,7 +38,7 @@ const Home = () => {
           </Link>
 
           <Link
-            to="/wall-of-art"
+            to="/art-gallery"
             className="bg-transparent border-2 border-vansiii-black text-vansiii-black px-8 py-4 rounded-full text-lg hover:accent-bg hover:text-vansiii-white hover:accent-border transition-colors text-center w-48"
           >
             Wall of Art

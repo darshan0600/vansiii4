@@ -18,7 +18,7 @@ interface Project {
 const Admin = () => {
   const navigate = useNavigate();
   const { isAdmin, logout } = useAuth();
-  const { login } = useAuth(); // Call useAuth at the top level
+  const { login } = useAuth(); 
   const [projects, setProjects] = useState(() => {
     const savedProjects = localStorage.getItem('portfolio_projects');
     return savedProjects ? JSON.parse(savedProjects) : [];
@@ -92,7 +92,7 @@ const Admin = () => {
     localStorage.setItem('portfolio_projects', JSON.stringify(updatedProjects));
   };
 
-  const handleUpdate = (id: number, field: keyof Project, value: any) => {
+  const handleUpdate = (id: number, field: keyof Project, value: unknown) => {
     const updatedProjects = projects.map((project: { id: number; }) => 
       project.id === id ? { ...project, [field]: value } : project
     );

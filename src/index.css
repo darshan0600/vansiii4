@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-[#F8F5F1] text-black font-sans;
+    @apply bg-[#Fafaf9] text-vansiii-black font-sans;
     font-feature-settings: "salt" on, "ss01" on, "ss02" on;
   }
 }
@@ -34,7 +34,7 @@
 .cursor-effect {
   width: 32px;
   height: 32px;
-  background: black;
+  background: #101010;
   border-radius: 50%;
   pointer-events: none;
   mix-blend-mode: exclusion;
@@ -75,4 +75,31 @@ html {
 
 .animate-pulse {
   animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom utility classes for Vansiii colors */
+@layer utilities {
+  .accent-bg {
+    @apply bg-vansiii-accent;
+  }
+
+  .accent-text {
+    @apply text-vansiii-accent;
+  }
+
+  .accent-border {
+    @apply border-vansiii-accent;
+  }
+
+  .hover\:accent-bg:hover {
+    @apply bg-vansiii-accent;
+  }
+
+  .hover\:accent-text:hover {
+    @apply text-vansiii-accent;
+  }
+
+  .hover\:accent-border:hover {
+    @apply border-vansiii-accent;
+  }
 }

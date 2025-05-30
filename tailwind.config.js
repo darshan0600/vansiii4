@@ -1,31 +1,15 @@
 /** @type {import('tailwindcss').Config} */
-export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+module.exports = {
+  content: [
+    './src/**/*.{js,jsx,ts,tsx}', // Scans all JS/TSX files in src for Tailwind classes
+  ],
   theme: {
     extend: {
-      fontFamily: {
-        sans: [
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Segoe UI',
-          'Roboto',
-          'Helvetica Neue',
-          'Arial',
-          'sans-serif',
-          'Apple Color Emoji',
-          'Segoe UI Emoji',
-          'Segoe UI Symbol'
-        ],
+      colors: {
+        'vansiii-black': '#101010',
+        'vansiii-white': '#FAFAF9',
+        'vansiii-accent': '#FF5A73',
       },
-      animation: {
-        'scroll': 'scroll 20s linear infinite',
-      },
-      keyframes: {
-        scroll: {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-100%)' },
-        }
-      }
     },
   },
   plugins: [],

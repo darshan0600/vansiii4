@@ -7,6 +7,7 @@ const services = [
   {
     icon: Code,
     title: "Web Development",
+    slug: "web-development",
     description: "Custom web applications built with modern technologies and best practices. From simple websites to complex web applications.",
     features: [
       "Frontend Development",
@@ -20,6 +21,7 @@ const services = [
   {
     icon: Palette,
     title: "UI/UX Design",
+    slug: "ui-ux-design",
     description: "User-centered design solutions that combine aesthetics with functionality. Creating intuitive and engaging digital experiences.",
     features: [
       "User Interface Design",
@@ -33,6 +35,7 @@ const services = [
   {
     icon: Camera,
     title: "Photography",
+    slug: "photography",
     description: "Professional photography services for products, events, and commercial purposes. Capturing moments that tell your story.",
     features: [
       "Product Photography",
@@ -46,6 +49,7 @@ const services = [
   {
     icon: Video,
     title: "Video Production",
+    slug: "video-production",
     description: "End-to-end video production services from concept to final delivery. Creating engaging visual content for your brand.",
     features: [
       "Commercial Videos",
@@ -59,6 +63,7 @@ const services = [
   {
     icon: Megaphone,
     title: "Digital Marketing",
+    slug: "digital-marketing",
     description: "Strategic digital marketing solutions to grow your online presence and reach your target audience effectively.",
     features: [
       "Social Media Marketing",
@@ -72,6 +77,7 @@ const services = [
   {
     icon: Layout,
     title: "Brand Identity",
+    slug: "brand-identity",
     description: "Comprehensive branding solutions that help establish and strengthen your brand's presence in the market.",
     features: [
       "Logo Design",
@@ -86,14 +92,14 @@ const services = [
 
 const Services = () => {
   return (
-    <div className="min-h-screen bg-[#F8F5F1] pt-20">
+    <div className="min-h-screen bg-vansiii-bg pt-20">
       <div className="max-w-7xl mx-auto px-4 py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl md:text-7xl font-light mb-6 tracking-tighter">
+          <h1 className="text-5xl md:text-7xl font-light mb-6 tracking-tighter text-vansiii-black">
             Our Services
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -109,11 +115,11 @@ const Services = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-all cursor-pointer"
+              className="group bg-vansiii-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-all cursor-pointer"
             >
-              <Link to={`/services/${service.title}`}>
-                <service.icon className="w-12 h-12 text-purple-600 mb-6 group-hover:scale-110 transition-transform" />
-                <h2 className="text-2xl font-medium mb-4 group-hover:text-purple-600 transition-colors">{service.title}</h2>
+              <Link to={`/services/${service.slug}`}>
+                <service.icon className="w-12 h-12 text-vansiii-accent mb-6 group-hover:scale-110 transition-transform" />
+                <h2 className="text-2xl font-medium mb-4 group-hover:text-vansiii-accent transition-colors">{service.title}</h2>
                 <p className="text-gray-600 mb-6">{service.description}</p>
                 
                 <ul className="space-y-3">
@@ -122,13 +128,13 @@ const Services = () => {
                       key={index}
                       className="flex items-center text-sm text-gray-600"
                     >
-                      <span className="w-1.5 h-1.5 bg-purple-600 rounded-full mr-3" />
+                      <span className="w-1.5 h-1.5 bg-vansiii-accent rounded-full mr-3" />
                       {feature}
                     </li>
                   ))}
                 </ul>
 
-                <div className="mt-6 text-purple-600 font-medium">
+                <div className="mt-6 text-vansiii-accent font-medium">
                   Learn More →
                 </div>
               </Link>
@@ -147,7 +153,7 @@ const Services = () => {
           </p>
           <Link
             to="/contact"
-            className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white bg-black rounded-full hover:bg-purple-600 transition-colors"
+            className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-vansiii-white bg-vansiii-accent rounded-full hover:accent-bg transition-colors"
           >
             Get in Touch
           </Link>
